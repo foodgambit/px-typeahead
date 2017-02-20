@@ -119,6 +119,8 @@ Custom property | Description | Default
         type: String,
         value: ''
       },
+
+      customSearch: Object,
       /**
       * The prefetched candidates retrieved by prefetchUrl
       */
@@ -294,9 +296,7 @@ Custom property | Description | Default
         if (suggestionsMenu){
           children = suggestionsMenu.getElementsByTagName('li');
           selectedItem = children[0];
-          if (selectedItem) {
-            selectedItem.classList.add('item-selected');
-          }
+          selectedItem.classList.add('item-selected');
         }
       }
     //this.set('inputValue',selectedItem.textContent.trim());
@@ -321,9 +321,7 @@ Custom property | Description | Default
         if (suggestionsMenu) {
           children = suggestionsMenu.getElementsByTagName('li');
           selectedItem = children[0];
-          if (selectedItem) {
-            selectedItem.classList.add('item-selected');
-          }
+          selectedItem.classList.add('item-selected');
         }
       }
     },
@@ -454,11 +452,17 @@ Custom property | Description | Default
     _boldResults: function(items, term) {
       var resultsList = items.base.map(function(fullString) {
         var termLocation = fullString.trim().toLowerCase().indexOf(term.trim().toLowerCase());
-          if (termLocation > -1) {
-            return {
+        if (termLocation > -1) {
+          return {
             prefix: fullString.trim().substr(0, termLocation),
             highlight: fullString.trim().substr(termLocation, term.length),
             suffix: fullString.trim().substr(termLocation+ term.length)
+          };
+        }
+        else {
+          return {
+            prefix: fullString,
+            suffix: ''
           };
         }
       });
@@ -481,14 +485,16 @@ Custom property | Description | Default
           return;
         }
 
-        if (this.localCandidates && this.localCandidates.length){
+        if (this.customSearch&& typeof this.customSearch === "function") {
+          matched = this.customSearch(this.localCandidates, term);
+        }
+        else if (this.localCandidates && this.localCandidates.length){
           matched = this._localCandidatesSearch(term);
         }
-
-        if (this._prefetchedCandidates && this._prefetchedCandidates.length){
+        else if (this._prefetchedCandidates && this._prefetchedCandidates.length){
           matched = this._prefetchedCandidatesSearch(term);
         }
-        if (this.remoteUrl){
+        else if (this.remoteUrl){
           matched = this._remoteUrlSearch(term);
         }
 
