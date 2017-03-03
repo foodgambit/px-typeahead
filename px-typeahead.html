@@ -120,7 +120,7 @@ Custom property | Description | Default
         value: ''
       },
 
-      customSearch: Object,
+      customSearchFunction: Object,
       /**
       * The prefetched candidates retrieved by prefetchUrl
       */
@@ -485,8 +485,8 @@ Custom property | Description | Default
           return;
         }
 
-        if (this.customSearch&& typeof this.customSearch === "function") {
-          matched = this.customSearch(this.localCandidates, term);
+        if (this.customSearchFunction && typeof this.customSearchFunction === "function") {
+          matched = this.customSearchFunction(this.localCandidates, term);
         }
         else if (this.localCandidates && this.localCandidates.length){
           matched = this._localCandidatesSearch(term);
